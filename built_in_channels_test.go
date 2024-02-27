@@ -2,6 +2,7 @@ package learning
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 )
@@ -123,6 +124,39 @@ func TestFanInExample(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		fmt.Println(<-fanin)
 	}
+}
+
+// Prints 5 numbers in random order from 5 or less goroutines
+func TestFanoutExample(t *testing.T) {
+	// Create a buffered channel to fan out messages to multiple goroutines
+	messages := make(chan string, 10)
+
+	// Create a wait group to wait for all goroutines to finish
+	var wg sync.WaitGroup
+
+	// Create 5 consumer goroutines
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+			for message := range messages {
+				fmt.Printf("Received message from go routine %d '%s'\n", id, message)
+			}
+		}(i)
+	}
+
+	// Create a producer goroutine
+	go func() {
+		messages <- "Hello"
+		messages <- "World"
+		messages <- "How"
+		messages <- "Are"
+		messages <- "You"
+		close(messages)
+	}()
+
+	// Wait for all goroutines to finish
+	wg.Wait()
 }
 
 // go test --race -run TestRaceCondition
