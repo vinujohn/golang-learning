@@ -2,6 +2,7 @@ package learning
 
 import (
 	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,6 +58,12 @@ func TestSlices(t *testing.T) {
 	prepend := append(appendFrom, appendTo...)
 	assert.Equal(t, []int{1, 2, 3, 99}, prepend)
 
+	// you can also use append to delete elements
+	del := []int{1, 2, 3, 4, 5}
+	assert.Equal(t, []int{1, 2, 5}, append(del[:2], del[4:]...))
+	// new slices.Delete in action which does the same thing
+	assert.Equal(t, []int{1, 2, 5}, slices.Delete(del, 2, 4))
+
 	// you can copy a slice to another slice using the copy function
 	copyTo, copyFrom := []int{}, []int{1, 2, 3}
 	copy(copyTo, copyFrom)
@@ -82,6 +89,11 @@ func TestSlices(t *testing.T) {
 	subsetSlice = append(subsetSlice, []int{98, 97}...)
 	assert.Equal(t, []int{99, 2, 3, 98, 97}, subsetSlice)
 	assert.Equal(t, []int{0, 99, 2, 3, 98, 97, 6, 7, 8, 9}, bigSlice)
+
+	// you can set slice elements to their zero value
+	toZeroOut := []bool{true, true, true}
+	clear(toZeroOut)
+	assert.Equal(t, []bool{false, false, false}, toZeroOut)
 }
 
 func modifySlice(s []int) {
