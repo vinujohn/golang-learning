@@ -44,10 +44,14 @@ func TestSlices(t *testing.T) {
 	assert.Equal(t, a, b)
 	assert.Equal(t, a, c)
 
-	// zero value of slize
+	// zero value of slice
 	var arrNil []int
 	assert.Nil(t, arrNil)
-	assert.Equal(t, 0, len(arrNil)) // len function still works on nil slices
+	assert.Equal(t, 0, len(arrNil))              // len function still works on nil slices
+	clear(arrNil)                                // clear works on nil slice
+	assert.Equal(t, []int{5}, append(arrNil, 5)) // even appending works
+	assert.Nil(t, arrNil)
+	assert.Panics(t, func() { _ = arrNil[0] }) // only indexing causes a panic
 
 	// append will append values from another slice to a slice
 	appendTo, appendFrom := []int{99}, []int{1, 2, 3}
